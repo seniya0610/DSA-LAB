@@ -22,7 +22,7 @@ int main() {
             cin >> value;
             arr[index] = value;
         } else {
-            cout << "Invalid index!" << endl;
+            cout << "Invalid" << endl;
         }
 
         cout << "Update another value? (y/n): ";
