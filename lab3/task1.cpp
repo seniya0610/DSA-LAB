@@ -1,115 +1,109 @@
 #include <iostream>
 using namespace std;
 
-class Node
-{
+class Node {
 public:
     int data;
-    Node *N;
+    Node* next;
 
-    Node(int d) : data(d), N(nullptr) {}
+    Node(int d) : data(d), next(nullptr) {}
 };
 
-class linkedlist
-{
+class linkedlist {
 public:
-    Node *head;
+    Node* head;
 
     linkedlist() : head(nullptr) {}
 
-    void Append(int e)
-    {
-        Node *point = new Node(e);
-        if (head == nullptr)
-        {
+    void Append(int e) {
+        Node* point = new Node(e);
+        if (head == nullptr) {
             head = point;
             return;
         }
-        Node *temp = head;
-        while (temp->N != nullptr)
-        {
-            temp = temp->N;
+        Node* temp = head;
+        while (temp->next != nullptr) {
+            temp = temp->next;
         }
-        temp->N = point;
+        temp->next = point;
     }
 
-    void display()
-    {
-        Node *temp = head;
-        while (temp->N != nullptr)
-        {
+    void display() {
+        Node* temp = head;
+        while (temp != nullptr) {
             cout << temp->data << " ";
-            temp = temp->N;
+            temp = temp->next;
         }
         cout << endl;
     }
 
-    bool isPalindrome()
-    {
-        if (head == nullptr || head->N == nullptr)
-        {
+    bool isPalindrome() {
+        if (head == nullptr || head->next == nullptr) {
             return true;
         }
 
-        Node *mid = middle();
-        Node *first = head;
-        Node *secondhalf = revlist(mid);
-        Node *second = secondhalf;
+        Node* mid = middle(); 
+        Node* secondHalf = revlist(mid); 
+        Node* first = head;
+        Node* second = secondHalf;
         bool palindrome = true;
 
-        while (second != nullptr)
-        {
-            if (first->data != second->data)
-            {
+        while (second != nullptr) {
+            if (first->data != second->data) {
                 palindrome = false;
                 break;
             }
-            first = first->N;
-            second = second->N;
+            first = first->next;
+            second = second->next;
         }
 
-        revlist(secondhalf);
+        revlist(secondHalf);
         return palindrome;
     }
 
 private:
-    Node *revlist(Node *ptr)
-    {
-        Node *previous = nullptr;
-        Node *current = ptr;
-        Node *N = nullptr;
+    Node* revlist(Node* ptr) {
+        Node* previous = nullptr;
+        Node* current = ptr;
+        Node* n = nullptr;
 
-        while (current != nullptr)
-        {
-            N = current->N;
-            current->N = previous;
+        while (current != nullptr) {
+            n = current->next;
+            current->next = previous;
             previous = current;
-            current = N;
+            current = n;
         }
         return previous;
     }
 
-    Node *middle()
-    {
-        Node *slow = head;
-        Node *fast = head;
+    Node* middle() {
+        Node* slow = head;
+        Node* fast = head;
 
-        while (fast != nullptr && fast->N != nullptr)
-        {
-            slow = slow->N;
-            fast = fast->N->N;
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
         }
-        return slow; // middle node
+
+        // if odd length, skip the middle
+        if (fast != nullptr) {
+            slow = slow->next;
+        }
+
+        return slow;
     }
 };
 
-int main()
-{
+int main() {
     linkedlist list;
+
     list.Append(1);
     list.Append(2);
+    list.Append(3);
     list.Append(2);
     list.Append(1);
+
+    list.display();
 
     cout << (list.isPalindrome() ? "Palindrome" : "Not Palindrome") << endl;
 }
