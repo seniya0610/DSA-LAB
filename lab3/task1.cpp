@@ -5,9 +5,9 @@ class Node
 {
 public:
     int data;
-    Node *next;
+    Node *N;
 
-    Node(int d) : data(d), next(nullptr) {}
+    Node(int d) : data(d), N(nullptr) {}
 };
 
 class linkedlist
@@ -26,27 +26,27 @@ public:
             return;
         }
         Node *temp = head;
-        while (temp->next != nullptr)
+        while (temp->N != nullptr)
         {
-            temp = temp->next;
+            temp = temp->N;
         }
-        temp->next = point;
+        temp->N = point;
     }
 
     void display()
     {
         Node *temp = head;
-        while (temp->next != nullptr)
+        while (temp->N != nullptr)
         {
             cout << temp->data << " ";
-            temp = temp->next;
+            temp = temp->N;
         }
         cout << endl;
     }
 
     bool isPalindrome()
     {
-        if (head == nullptr || head->next == nullptr)
+        if (head == nullptr || head->N == nullptr)
         {
             return true;
         }
@@ -64,8 +64,8 @@ public:
                 palindrome = false;
                 break;
             }
-            first = first->next;
-            second = second->next;
+            first = first->N;
+            second = second->N;
         }
 
         revlist(secondhalf);
@@ -77,14 +77,14 @@ private:
     {
         Node *previous = nullptr;
         Node *current = ptr;
-        Node *next = nullptr;
+        Node *N = nullptr;
 
         while (current != nullptr)
         {
-            next = current->next;
-            current->next = previous;
+            N = current->N;
+            current->N = previous;
             previous = current;
-            current = next;
+            current = N;
         }
         return previous;
     }
@@ -94,10 +94,10 @@ private:
         Node *slow = head;
         Node *fast = head;
 
-        while (fast != nullptr && fast->next != nullptr)
+        while (fast != nullptr && fast->N != nullptr)
         {
-            slow = slow->next;
-            fast = fast->next->next;
+            slow = slow->N;
+            fast = fast->N->N;
         }
         return slow; // middle node
     }
