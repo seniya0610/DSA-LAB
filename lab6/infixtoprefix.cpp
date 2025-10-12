@@ -54,31 +54,26 @@ string infixToPrefix(string infix) {
     string prefix = "";
     Stack st(infix.length());
 
-    // Traverse from right to left
     for (int i = infix.length() - 1; i >= 0; i--) {
         char c = infix[i];
 
-        // Operand check (without isalnum)
         if ((c >= 'A' && c <= 'Z') ||
             (c >= 'a' && c <= 'z') ||
             (c >= '0' && c <= '9')) {
             prefix = c + prefix;
         }
 
-        // Closing bracket — push to stack
         else if (c == ')') {
             st.push(c);
         }
 
-        // Opening bracket — pop until ')' found
         else if (c == '(') {
             while (!st.isEmpty() && st.peek() != ')') {
                 prefix = st.pop() + prefix;
             }
-            st.pop(); // remove ')'
+            st.pop();
         }
 
-        // Operator
         else if (isOperator(c)) {
             while (!st.isEmpty() && getPrecedence(st.peek()) > getPrecedence(c)) {
                 prefix = st.pop() + prefix;
@@ -87,7 +82,6 @@ string infixToPrefix(string infix) {
         }
     }
 
-    // Pop remaining operators
     while (!st.isEmpty()) {
         prefix = st.pop() + prefix;
     }
