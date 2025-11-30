@@ -1,0 +1,110 @@
+#include <iostream>
+using namespace std;
+
+class RehashTable {
+public:
+    int size;
+    int *table;
+
+    RehashTable(int s) {
+        size = s;
+        table = new int[size];
+        for (int i = 0; i < size; i++)
+            table[i] = -1;
+    }
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+    // Insert using linear probing
+    void insert(int key) {
+        int index = hashFunction(key);
+
+        int start = index;
+        while (table[index] != -1) {
+            index = (index + 1) % size;
+            if (index == start) {
+                cout << "Table Full! Cannot insert\n";
+                return;
+            }
+        }
+        table[index] = key;
+    }
+
+    // Count elements
+    float loadFactor() {
+        int count = 0;
+        for (int i = 0; i < size; i++)
+            if (table[i] != -1)
+                count++;
+
+        return (float)count / size;
+    }
+
+    // Returns next prime number after n
+    int nextPrime(int n) {
+        while (true) {
+            bool isPrime = true;
+            for (int i = 2; i * i <= n; i++) {
+                if (n % i == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+            if (isPrime)
+                return n;
+            n++;
+        }
+    }
+
+    // Perform rehashing
+    void rehash() {
+        cout << "\nRehashing triggered!\n";
+
+        int oldSize = size;
+        int *oldTable = table;
+
+        size = nextPrime(size * 2);  // new size = prime after double
+        table = new int[size];
+
+        for (int i = 0; i < size; i++)
+            table[i] = -1;
+
+        cout << "New table size: " << size << endl;
+
+        for (int i = 0; i < oldSize; i++) {
+            if (oldTable[i] != -1)
+                insert(oldTable[i]);
+        }
+    }
+
+    void display() {
+        cout << "\nHash Table:\n";
+        for (int i = 0; i < size; i++) {
+            if (table[i] != -1)
+                cout << i << ": " << table[i] << endl;
+            else
+                cout << i << ": Empty\n";
+        }
+    }
+};
+
+int main() {
+    RehashTable ht(7);
+
+    int keys[] = {10, 20, 5, 15, 7, 32, 14, 28};
+    int n = 8;
+
+    for (int i = 0; i < n; i++) {
+        cout << "\nInserting: " << keys[i];
+        ht.insert(keys[i]);
+
+        if (ht.loadFactor() > 0.7)
+            ht.rehash();
+    }
+
+    ht.display();
+
+    return 0;
+}
