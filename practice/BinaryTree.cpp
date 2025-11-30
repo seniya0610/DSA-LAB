@@ -41,6 +41,17 @@ public:
 
 class BinaryTree
 {
+
+private:
+    Node *findmin(Node *node)
+    {
+        while (node->left != nullptr)
+        {
+            node = node->left;
+        }
+        return node;
+    }
+
 public:
     Node *root;
 
@@ -103,6 +114,49 @@ public:
             if (temp->right)
                 q.push(temp->right);
         }
+    }
+
+    Node *deleteNode(Node *node, int key)
+    {
+        if (root == nullptr)
+        {
+            return root;
+        }
+
+        if (key < node->data)
+        {
+            node->left = deleteNode(node->left, key);
+        }
+        else if (key > node->data)
+        {
+            node->right = deleteNode(node->right, key);
+        }
+        else
+        { // case one: no child
+            if (node->left == nullptr && node->right == nullptr)
+            {
+                delete node;
+                return nullptr;
+            } // case two (a): right child only
+            else if (node->left == nullptr)
+            {
+                Node *temp = node->right;
+                delete node;
+                return temp;
+            }
+            else if (node->right == nullptr)
+            {
+                Node *temp = node->left;
+                delete node;
+                return temp;
+            }
+            //case three: two children
+            Node *temp = findmin(node->right);
+            node->data = temp->data;
+            node->right = deleteNode(node->right, temp->data);
+        }
+
+        return node;
     }
 
     void preorder(Node *node) // dfs preorder
