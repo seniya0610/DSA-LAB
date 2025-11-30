@@ -94,6 +94,10 @@ public:
         }
     }
 
+    void deleteValue(int key) {
+        root = deleteNode(root, key);
+    }
+
     void storeInArray(int output[]) // Store tree into array in BFS order
     {
         if (root == NULL)
