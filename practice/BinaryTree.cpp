@@ -147,7 +147,7 @@ public:
                 Node *temp = node->right;
                 delete node;
                 return temp;
-            }
+            } // case two (b): left child only
             else if (node->right == nullptr)
             {
                 Node *temp = node->left;
