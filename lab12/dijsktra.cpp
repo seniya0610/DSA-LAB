@@ -1,4 +1,5 @@
 #include <iostream>
+#include <climits>  // For INT_MAX
 using namespace std;
 
 class student
@@ -32,6 +33,17 @@ public:
         }
     }
 
+    // Destructor to prevent memory leaks
+    ~Graph()
+    {
+        for (int i = 0; i < nodes; i++)
+        {
+            delete[] weightMatrix[i];
+        }
+        delete[] weightMatrix;
+        delete[] students;
+    }
+
     void addStudent(int index, string name, int id)
     {
         if (index >= 0 && index < nodes)
@@ -60,15 +72,28 @@ public:
 
     int minDist(bool visited[], int dist[])
     {
-        int min = -1, int minDist = INT_MAX;
+        int minIndex = -1;
+        int minDistance = INT_MAX;
         for (int i = 0; i < nodes; i++)
         {
-            if (!visited[i] && dist[i] < minDist)
+            if (!visited[i] && dist[i] < minDistance)
             {
-                minDist = dist[i];
-                min = i;
+                minDistance = dist[i];
+                minIndex = i;
             }
         }
+        return minIndex;
+    }
+
+    void printPath(int parent[], int target)
+    {
+        if (parent[target] == -1)
+        {
+            cout << students[target].name;
+            return;
+        }
+        printPath(parent, parent[target]);
+        cout << " -> " << students[target].name;
     }
 
     void dijkstra(int start, int target)
@@ -81,40 +106,56 @@ public:
 
         int *dist = new int[nodes];   // Stores shortest distance from start to each node
         int *parent = new int[nodes]; // Stores the predecessor node to reconstruct the path
-        bool *visited = new bool[nodes]{false}; // Track visited nodes
+        bool *visited = new bool[nodes]; // Track visited nodes
 
-        // step 1: initialize distances and parents
+        // Initialize arrays
         for (int i = 0; i < nodes; i++)
         {
             dist[i] = INT_MAX;
-            parent[i] = -1; // -1 means no predecessor (used for start node/unreachable)
+            parent[i] = -1;
+            visited[i] = false;
         }
         dist[start] = 0;
 
-        for (int count = 0; count < nodes - 1; count++)
+        for (int count = 0; count < nodes; count++)
         {
             int u = minDist(visited, dist);
             
-            if (u == -1) { break; }
-            if (u == target){ break; }
+            if (u == -1) { break; } // No more reachable nodes
+            if (u == target) { break; } // Found target
 
             visited[u] = true;
-            for (int v = 0; v < nodes; nodes++){
+            
+            // Fix: Changed 'nodes++' to 'v++' in the loop condition
+            for (int v = 0; v < nodes; v++)
+            {
                 int weight = weightMatrix[u][v];
-                // Check 1: Is node v unvisited?
-                // Check 2: Is there a valid path (edgeWeight > 0) AND is the distance to u not infinity?
-                // Check 3: Is the new path (alt) shorter than the current distance to v?
+                // Check if there's an edge and if we found a shorter path
                 if (!visited[v] && weight > 0 && dist[u] != INT_MAX && dist[u] + weight < dist[v])
                 {
-                    int alt = dist[u] + weight;
-                    if (alt < dist[v])
-                    {
-                        dist[v] = alt;
-                        parent[v] = u;
-                    }
+                    dist[v] = dist[u] + weight;
+                    parent[v] = u;
                 }
             }
         }
+
+        // Print results
+        cout << "\nDijkstra's Algorithm Results:" << endl;
+        cout << "Shortest path from " << students[start].name << " to " << students[target].name << ": ";
+        if (dist[target] == INT_MAX)
+        {
+            cout << "No path exists" << endl;
+        }
+        else
+        {
+            printPath(parent, target);
+            cout << " (Total distance: " << dist[target] << ")" << endl;
+        }
+
+        // Clean up dynamic memory
+        delete[] dist;
+        delete[] parent;
+        delete[] visited;
     }
 
     void display()
@@ -158,7 +199,6 @@ int main()
     g.addEdge(4, 3, 9);
 
     g.display();
-
     g.dijkstra(0, 3);
 
     return 0;
